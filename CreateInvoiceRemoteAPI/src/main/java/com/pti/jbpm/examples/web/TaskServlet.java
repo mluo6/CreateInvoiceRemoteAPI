@@ -51,8 +51,9 @@ public class TaskServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException, Exception {
 		String activity = request.getParameter("activity");
 		String user = request.getParameter("user");
+		
 		ServletContext context = this.getServletContext();
-		TaskBean taskBean = new TaskBean();
+		TaskBean taskBean = new TaskBean(user, user);
 		String targetPage = "/task?activity=Tasklist&user=" + user;
 		if ("list".equals(activity)) {
 			try {

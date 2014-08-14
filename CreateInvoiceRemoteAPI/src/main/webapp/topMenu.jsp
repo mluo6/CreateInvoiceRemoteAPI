@@ -10,7 +10,7 @@ String user = (String)session.getAttribute("currentUser");
 			</a>&nbsp;&nbsp;|&nbsp;&nbsp;
 		</td>
 		<td bgcolor="black">
-			<a href="<%=root%>/process?activity=create&recipient=<%=user%>" style="text-decoration: none">
+			<a href="<%=root%>/createProcess.jsp?user=<%=user%>" style="text-decoration: none">
 				<font size="2" color="white"><b>CREATE INVOICE</b></font>
 			</a>&nbsp;&nbsp;|&nbsp;&nbsp;
 		</td>

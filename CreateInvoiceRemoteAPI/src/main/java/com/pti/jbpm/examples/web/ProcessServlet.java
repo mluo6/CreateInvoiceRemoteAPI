@@ -40,22 +40,24 @@ public class ProcessServlet extends HttpServlet {
 		String activity = request.getParameter("activity");
 		if ("create".equals(activity)) {
 			String recipient = request.getParameter("recipient");
+			String processId = request.getParameter("processId");
 			try {
-				long processInstanceId = processService.startProcess(recipient);
+				long processInstanceId = processService.startProcess(recipient, recipient, processId);
 				System.out.println("process instance (id = " + processInstanceId
 						+ ") has been started.");
-		        RequestDispatcher dispatcher = context.getRequestDispatcher("/process?activity=list");
+		        RequestDispatcher dispatcher = context.getRequestDispatcher("/task?activity=list&user="+recipient);
 		        dispatcher.forward(request, response);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
 		} else if("stop".equals(activity)){
 			String processInstanceId = request.getParameter("processInstanceId");
+			String user = (String) request.getSession(false).getAttribute("currentUser");
 			try {
 				System.out.println("Stopping process instance (id = "
 						+ processInstanceId + ").");
-				processService.stopProcessInstance(processInstanceId);
-		        RequestDispatcher dispatcher = context.getRequestDispatcher("/process?activity=list");
+				processService.stopProcessInstance(processInstanceId, user, user);
+		        RequestDispatcher dispatcher = context.getRequestDispatcher("/task?activity=list&user="+user);
 		        dispatcher.forward(request, response);
 			} catch (Exception e) {
 				throw new ServletException(e);

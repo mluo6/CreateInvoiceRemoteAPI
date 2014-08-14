@@ -31,9 +31,10 @@ public class TaskBean {
 	private TaskService taskService = null;
 	private AuditLogService logService = null;
 
-	public TaskBean() {
-		this.taskService = RemoteApi.getTaskService();
-		this.logService = RemoteApi.getAuditLogService();
+	public TaskBean(String user, String pwd) {
+		RemoteApi remoteApi = new RemoteApi(user, pwd);
+		this.taskService = remoteApi.getTaskService();
+		this.logService = remoteApi.getAuditLogService();
 	}
 
 	public List<ProcessInstanceLog> getProcessInstances() throws Exception {
@@ -41,7 +42,7 @@ public class TaskBean {
 		List<ProcessInstanceLog> list = null;
 
 		try {
-			list = logService.findProcessInstances(RemoteApi.PROCESS_ID);
+			list = logService.findProcessInstances();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
