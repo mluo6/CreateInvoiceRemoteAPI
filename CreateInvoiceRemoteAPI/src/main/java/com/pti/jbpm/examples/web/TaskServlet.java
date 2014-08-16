@@ -14,6 +14,7 @@ import org.jbpm.process.audit.ProcessInstanceLog;
 import org.kie.api.task.model.TaskSummary;
 
 import com.pti.jbpm.examples.service.TaskBean;
+import com.pti.jbpm.examples.service.UserAndRoleHelper;
 import com.pti.jbpm.examples.service.VoInvoice;
 
 public class TaskServlet extends HttpServlet {
@@ -107,6 +108,13 @@ public class TaskServlet extends HttpServlet {
 		} else if ("Claim".equals(activity)) {
 			long taskId = Long.parseLong(request.getParameter("taskId"));
 			taskBean.claimTask(user, taskId);
+		} else if("ReassignInit".equals(activity)) {
+			long taskId = Long.parseLong(request.getParameter("taskId"));
+			List<String> users = UserAndRoleHelper.getUsers(user);
+			request.setAttribute("users", users);
+			request.setAttribute("taskId", taskId);
+			request.setAttribute("user", user);
+			targetPage = "/assignTask.jsp";
 		} else if ("Reassign".equals(activity)) {
 			String newUser = request.getParameter("newUser");
 			long taskId = Long.parseLong(request.getParameter("taskId"));

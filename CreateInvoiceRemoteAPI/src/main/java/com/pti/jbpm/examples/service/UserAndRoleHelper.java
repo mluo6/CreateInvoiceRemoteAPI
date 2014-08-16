@@ -76,6 +76,16 @@ public class UserAndRoleHelper {
 		return roles;
 	}
 	
+	public static List<String> getUsers(String excludedUser) {
+		List<String> result = new ArrayList<String>();
+		for(String str: users.keySet()){
+			if(!str.equalsIgnoreCase(excludedUser)) {
+				result.add(str);
+			}
+		}
+		return result;
+	}
+	
 	public static List<String> getGroupsForUser(String userName){
 		return userRoles.get(userName);
 	}

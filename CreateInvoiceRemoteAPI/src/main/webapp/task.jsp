@@ -8,14 +8,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>jBPM6 Web Application Sample</title>
-<script type="text/javascript">
-function winPopUp(id) {
-	var tempId = "task"+id;
-	var taskId = document.getElementById(tempId).value;
-	var url = "assignTask.jsp?taskId="+taskId;
-	window.open(url,'','width=350, height=200');
-}
-</script>
 </head>
 <body>
 	<jsp:include page="topMenu.jsp" flush="true" />
@@ -33,39 +25,48 @@ function winPopUp(id) {
 			<th>Task Id</th>
 			<th>Process Id</th>
 			<th>ProcessInstance Id</th>
+			<th>Owner</th>
 			<th>Status</th>
 			<th>Action</th>
 		</tr>
 		<%
-			int i = 0;	
+		if(null != tasks) {	
+			int i = 0;
+			String actualOwner = null;
 			for (TaskSummary task : tasks) {
 				i++;
+				actualOwner = null;
+				if(null != task.getActualOwner()) {
+					actualOwner = task.getActualOwner().getId();
+				}
 		%>
 		<tr>
 			<td><%=task.getName()%></td>
 			<td><%=task.getId()%></td>
 			<td><%=task.getProcessId()%></td>
 			<td><%=task.getProcessInstanceId()%></td>
+			<td><%=(null==actualOwner ? "" : actualOwner)%></td>
 			<td><%=task.getStatus()%></td>
-			<td><input type="hidden" id="task<%=i%>" value="<%=task.getId()%>" />
+			<td>
 				<% if(Status.Ready.equals(task.getStatus())) {%>
 					<a href="task?user=<%=user%>&taskId=<%=task.getId()%>&activity=Claim">Claim</a>
-				<%} else if(Status.Reserved.equals(task.getStatus())) { %>
+				<%} else if(Status.Reserved.equals(task.getStatus()) && user.equals(actualOwner)) { %>
 					<a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=Start&taskName=<%=task.getName()%>">Start</a>&nbsp;&nbsp;
 					<a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=Release">Release</a>&nbsp;&nbsp;
-					<!-- a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=Stop">Stop</a>&nbsp;&nbsp;
-					<a href="javascript:winPopUp(<%=i%>)" onclick="return false"><b>Reassign</b></a-->
-				<%} else if(Status.InProgress.equals(task.getStatus())) {%>
+					<a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=ReassignInit">Reassign</a>
+				<%} else if(Status.InProgress.equals(task.getStatus()) && user.equals(actualOwner)) {%>
 					<a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=Process&taskName=<%=task.getName()%>">Process</a>&nbsp;&nbsp;
 					<a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=Release">Release</a>&nbsp;&nbsp;
-					<!-- a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=Stop">Stop</a>&nbsp;&nbsp;
-					<a href="javascript:winPopUp(<%=i%>)" onclick="return false"><b>Reassign</b></a-->
-				<%} else if(Status.Completed.equals(task.getStatus())) {%>
+					<a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=Stop">Stop</a>&nbsp;&nbsp;
+					<a href="<%=root%>/task?user=<%=user%>&taskId=<%=task.getId()%>&activity=ReassignInit">Reassign</a>
+				<%} else {%>
+					N/A
 				<%}%>
 			</td>
 		</tr>
 		<%
 			}
+		}
 		%>
 	</table>
 </body>
